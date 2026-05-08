@@ -7,7 +7,7 @@ class m000000_000000_create_oauth_tables extends Migration
     public function safeUp(): void
     {
         $this->createTable('{{%oauth_clients}}', [
-            'id'              => $this->string(80)->notNull(),
+            'id'              => $this->string(80)->notNull()->append('PRIMARY KEY'),
             'name'            => $this->string(255)->notNull(),
             'secret'          => $this->string(255)->null()->defaultValue(null),
             'redirect_uris'   => $this->text()->notNull(),
@@ -20,17 +20,15 @@ class m000000_000000_create_oauth_tables extends Migration
             'created_at'      => $this->integer()->notNull(),
             'updated_at'      => $this->integer()->notNull(),
         ]);
-        $this->addPrimaryKey('pk_oauth_clients', '{{%oauth_clients}}', 'id');
 
         $this->createTable('{{%oauth_scopes}}', [
-            'identifier'  => $this->string(80)->notNull(),
+            'identifier'  => $this->string(80)->notNull()->append('PRIMARY KEY'),
             'description' => $this->string(500)->null()->defaultValue(null),
             'is_default'  => $this->tinyInteger(1)->notNull()->defaultValue(0),
         ]);
-        $this->addPrimaryKey('pk_oauth_scopes', '{{%oauth_scopes}}', 'identifier');
 
         $this->createTable('{{%oauth_access_tokens}}', [
-            'id'         => $this->string(80)->notNull(),
+            'id'         => $this->string(80)->notNull()->append('PRIMARY KEY'),
             'client_id'  => $this->string(80)->notNull(),
             'user_id'    => $this->string(255)->null()->defaultValue(null),
             'scopes'     => $this->text()->null()->defaultValue(null),
@@ -38,23 +36,21 @@ class m000000_000000_create_oauth_tables extends Migration
             'expires_at' => $this->integer()->notNull(),
             'created_at' => $this->integer()->notNull(),
         ]);
-        $this->addPrimaryKey('pk_oauth_access_tokens', '{{%oauth_access_tokens}}', 'id');
         $this->createIndex('idx_at_client',  '{{%oauth_access_tokens}}', 'client_id');
         $this->createIndex('idx_at_user',    '{{%oauth_access_tokens}}', 'user_id');
         $this->createIndex('idx_at_expires', '{{%oauth_access_tokens}}', 'expires_at');
 
         $this->createTable('{{%oauth_refresh_tokens}}', [
-            'id'              => $this->string(80)->notNull(),
+            'id'              => $this->string(80)->notNull()->append('PRIMARY KEY'),
             'access_token_id' => $this->string(80)->notNull(),
             'revoked'         => $this->tinyInteger(1)->notNull()->defaultValue(0),
             'expires_at'      => $this->integer()->notNull(),
             'created_at'      => $this->integer()->notNull(),
         ]);
-        $this->addPrimaryKey('pk_oauth_refresh_tokens', '{{%oauth_refresh_tokens}}', 'id');
         $this->createIndex('idx_rt_at', '{{%oauth_refresh_tokens}}', 'access_token_id');
 
         $this->createTable('{{%oauth_auth_codes}}', [
-            'id'                    => $this->string(80)->notNull(),
+            'id'                    => $this->string(80)->notNull()->append('PRIMARY KEY'),
             'client_id'             => $this->string(80)->notNull(),
             'user_id'               => $this->string(255)->notNull(),
             'redirect_uri'          => $this->string(2000)->notNull(),
@@ -65,7 +61,6 @@ class m000000_000000_create_oauth_tables extends Migration
             'expires_at'            => $this->integer()->notNull(),
             'created_at'            => $this->integer()->notNull(),
         ]);
-        $this->addPrimaryKey('pk_oauth_auth_codes', '{{%oauth_auth_codes}}', 'id');
         $this->createIndex('idx_ac_client', '{{%oauth_auth_codes}}', 'client_id');
     }
 

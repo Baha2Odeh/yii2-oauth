@@ -18,8 +18,8 @@ class OAuthAccessTokenTest extends TestCase
         $token = new OAuthAccessToken();
         $token->id = $overrides['id'] ?? $hash;
         $token->client_id = $overrides['client_id'] ?? 'test_client';
-        $token->user_id = $overrides['user_id'] ?? '42';
-        $token->scopes = $overrides['scopes'] ?? json_encode(['read', 'write']);
+        $token->user_id = array_key_exists('user_id', $overrides) ? $overrides['user_id'] : '42';
+        $token->scopes = array_key_exists('scopes', $overrides) ? $overrides['scopes'] : json_encode(['read', 'write']);
         $token->revoked = $overrides['revoked'] ?? 0;
         $token->expires_at = $overrides['expires_at'] ?? time() + 3600;
         $token->created_at = time();

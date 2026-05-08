@@ -3,7 +3,6 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true"
-         strictCoverage="false"
          displayDetailsOnTestsThatTriggerWarnings="true"
          displayDetailsOnTestsThatTriggerNotices="true">
 
@@ -13,9 +12,9 @@
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <source>
         <include>
             <directory suffix=".php">src</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit>
