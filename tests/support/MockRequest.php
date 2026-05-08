@@ -13,12 +13,12 @@ class MockRequest extends \yii\web\Request
     private array $queryParams = [];
     private string $authorizationHeader = '';
 
-    public function setBodyParams(array $params): void
+    public function setBodyParams($params): void
     {
         $this->bodyParams = $params;
     }
 
-    public function setQueryParams(array $params): void
+    public function setQueryParams($params): void
     {
         $this->queryParams = $params;
     }
