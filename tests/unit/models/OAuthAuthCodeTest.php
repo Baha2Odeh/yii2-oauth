@@ -20,7 +20,7 @@ class OAuthAuthCodeTest extends TestCase
         $code->client_id = $overrides['client_id'] ?? 'client_1';
         $code->user_id = $overrides['user_id'] ?? '42';
         $code->redirect_uri = $overrides['redirect_uri'] ?? 'https://app.test/cb';
-        $code->scopes = $overrides['scopes'] ?? json_encode(['read']);
+        $code->scopes = array_key_exists('scopes', $overrides) ? $overrides['scopes'] : json_encode(['read']);
         $code->code_challenge = $overrides['code_challenge'] ?? null;
         $code->code_challenge_method = $overrides['code_challenge_method'] ?? null;
         $code->revoked = $overrides['revoked'] ?? 0;
