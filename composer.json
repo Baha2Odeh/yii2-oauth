@@ -27,6 +27,11 @@
             "url": "https://asset-packagist.org"
         }
     ],
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
     "extra": {
         "yii2-extension": {
             "bootstrap": "baha2odeh\\yii2oauth\\OAuthModule"
