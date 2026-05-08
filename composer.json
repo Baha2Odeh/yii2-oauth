@@ -21,6 +21,12 @@
             "baha2odeh\\yii2oauth\\tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "extra": {
         "yii2-extension": {
             "bootstrap": "baha2odeh\\yii2oauth\\OAuthModule"
