@@ -76,7 +76,7 @@ class UserinfoAction extends Action
             return $response;
         }
 
-        $claims = method_exists($user, 'getClaims') ? $user->getClaims() : [];
+        $claims = method_exists($user, 'getClaims') ? $user->getClaims($token->getScopes()) : [];
         $response->data = array_merge(['sub' => (string) $userId], $claims);
 
         return $response;

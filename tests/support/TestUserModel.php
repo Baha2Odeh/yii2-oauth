@@ -29,9 +29,25 @@ class TestUserModel implements UserEntityInterface
         return $this->id;
     }
 
-    public function getClaims(): array
+    public function getClaims(array $scopes = []): array
     {
-        return $this->claims;
+        if (empty($scopes)) {
+            return $this->claims;
+        }
+
+        $allowed = [];
+        if (in_array('profile', $scopes, true)) {
+            foreach (['name', 'given_name', 'family_name', 'picture'] as $k) {
+                if (isset($this->claims[$k])) {
+                    $allowed[$k] = $this->claims[$k];
+                }
+            }
+        }
+        if (in_array('email', $scopes, true) && isset($this->claims['email'])) {
+            $allowed['email'] = $this->claims['email'];
+        }
+
+        return $allowed;
     }
 
     // ---- Static API expected by PasswordGrant ----

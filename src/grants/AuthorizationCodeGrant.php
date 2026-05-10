@@ -151,7 +151,7 @@ class AuthorizationCodeGrant extends AbstractGrant
         }
 
         $redirectUri = $request->getBodyParam('redirect_uri', '');
-        if (!empty($redirectUri) && $redirectUri !== $authCode->getRedirectUri()) {
+        if ($redirectUri !== $authCode->getRedirectUri()) {
             throw new InvalidGrantException('redirect_uri mismatch.');
         }
 

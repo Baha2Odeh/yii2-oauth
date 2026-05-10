@@ -99,6 +99,11 @@ class AuthorizeAction extends Action
             \Yii::$app->response->data = 'Authorization session expired. Please start again.';
             return \Yii::$app->response;
         }
+        // If user is not logged in, redirect to login and come back
+        if (\Yii::$app->user->isGuest) {
+            \Yii::$app->user->loginRequired();
+            return \Yii::$app->response;
+        }
 
         \Yii::$app->session->remove($this->sessionKey);
 
