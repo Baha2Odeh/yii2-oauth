@@ -77,7 +77,9 @@ class OAuthModule extends Module implements BootstrapInterface
         parent::init();
 
         if (empty($this->controllerNamespace)) {
-            $this->controllerNamespace = 'baha2odeh\yii2oauth\controllers';
+            $this->controllerNamespace = \Yii::$app instanceof \yii\console\Application
+                ? 'baha2odeh\yii2oauth\controllers\console'
+                : 'baha2odeh\yii2oauth\controllers';
         }
 
         $this->controllerMap = array_merge([
