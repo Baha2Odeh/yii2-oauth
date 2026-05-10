@@ -83,9 +83,9 @@ class OAuthModule extends Module implements BootstrapInterface
         }
 
         $this->controllerMap = array_merge([
-            'token'     => controllers\DefaultTokenController::class,
+            'token' => controllers\DefaultTokenController::class,
             'authorize' => controllers\DefaultAuthorizeController::class,
-            'userinfo'  => controllers\DefaultUserinfoController::class,
+            'userinfo' => controllers\DefaultUserinfoController::class,
         ], $this->controllerMap ?? []);
     }
 
@@ -97,33 +97,33 @@ class OAuthModule extends Module implements BootstrapInterface
         if ($app instanceof \yii\web\Application) {
             $app->getUrlManager()->addRules([
                 [
-                    'class'   => \yii\web\UrlRule::class,
-                    'pattern' => $this->id . '/token',
-                    'route'   => $this->id . '/token/token',
-                    'verb'    => 'POST',
+                    'class' => \yii\web\UrlRule::class,
+                    'pattern' => $this->id.'/token',
+                    'route' => $this->id.'/token/token',
+                    'verb' => 'POST',
                 ],
                 [
-                    'class'   => \yii\web\UrlRule::class,
-                    'pattern' => $this->id . '/authorize',
-                    'route'   => $this->id . '/authorize/index',
+                    'class' => \yii\web\UrlRule::class,
+                    'pattern' => $this->id.'/authorize',
+                    'route' => $this->id.'/authorize/index',
                 ],
                 [
-                    'class'   => \yii\web\UrlRule::class,
-                    'pattern' => $this->id . '/authorize/approve',
-                    'route'   => $this->id . '/authorize/approve',
-                    'verb'    => 'POST',
+                    'class' => \yii\web\UrlRule::class,
+                    'pattern' => $this->id.'/authorize/approve',
+                    'route' => $this->id.'/authorize/approve',
+                    'verb' => 'POST',
                 ],
                 [
-                    'class'    => \yii\web\UrlRule::class,
-                    'pattern'  => $this->id . '/userinfo',
-                    'route'    => $this->id . '/userinfo/index',
-                    'verb'     => ['GET', 'POST'],
+                    'class' => \yii\web\UrlRule::class,
+                    'pattern' => $this->id.'/userinfo',
+                    'route' => $this->id.'/userinfo/index',
+                    'verb' => ['GET', 'POST'],
                 ],
             ], false);
         }
 
         if ($app instanceof \yii\console\Application) {
-            $app->controllerMap[$this->id . '/client'] = [
+            $app->controllerMap[$this->id.'/client'] = [
                 'class' => controllers\console\ClientController::class,
                 'moduleId' => $this->id,
             ];
@@ -146,20 +146,20 @@ class OAuthModule extends Module implements BootstrapInterface
         $generator = new TokenGenerator($this->tokenBytes);
 
         $sharedConfig = [
-            'clientModelClass'       => $this->clientModelClass,
-            'accessTokenModelClass'  => $this->accessTokenModelClass,
+            'clientModelClass' => $this->clientModelClass,
+            'accessTokenModelClass' => $this->accessTokenModelClass,
             'refreshTokenModelClass' => $this->refreshTokenModelClass,
-            'scopeModelClass'        => $this->scopeModelClass,
-            'tokenGenerator'         => $generator,
-            'accessTokenTtl'         => $this->accessTokenTtl,
-            'refreshTokenTtl'        => $this->refreshTokenTtl,
+            'scopeModelClass' => $this->scopeModelClass,
+            'tokenGenerator' => $generator,
+            'accessTokenTtl' => $this->accessTokenTtl,
+            'refreshTokenTtl' => $this->refreshTokenTtl,
         ];
 
         $builtInMap = [
             'authorization_code' => AuthorizationCodeGrant::class,
             'client_credentials' => ClientCredentialsGrant::class,
-            'password'           => PasswordGrant::class,
-            'refresh_token'      => RefreshTokenGrant::class,
+            'password' => PasswordGrant::class,
+            'refresh_token' => RefreshTokenGrant::class,
         ];
 
         foreach ($this->enabledGrants as $grantId) {
@@ -188,8 +188,8 @@ class OAuthModule extends Module implements BootstrapInterface
         foreach ($this->customGrants as $grantId => $grantClass) {
             $server->registerGrant(new $grantClass(array_merge($sharedConfig, [
                 'authCodeModelClass' => $this->authCodeModelClass,
-                'authCodeTtl'        => $this->authCodeTtl,
-                'userModelClass'     => $this->userModelClass,
+                'authCodeTtl' => $this->authCodeTtl,
+                'userModelClass' => $this->userModelClass,
             ])));
         }
 

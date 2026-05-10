@@ -81,7 +81,7 @@ class TokenGeneratorTest extends TestCase
 
     public function testRawTokenIsNotStoredHash(): void
     {
-        $raw  = $this->generator->generate();
+        $raw = $this->generator->generate();
         $hash = TokenGenerator::hash($raw);
 
         // Verify round-trip: hashing raw gives the stored value

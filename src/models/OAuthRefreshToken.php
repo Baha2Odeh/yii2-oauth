@@ -9,9 +9,9 @@ use yii\db\ActiveRecord;
 /**
  * @property string $id               SHA-256 hash of raw refresh token
  * @property string $access_token_id  SHA-256 hash of the associated access token
- * @property int    $revoked
- * @property int    $expires_at
- * @property int    $created_at
+ * @property int $revoked
+ * @property int $expires_at
+ * @property int $created_at
  */
 class OAuthRefreshToken extends ActiveRecord implements RefreshTokenEntityInterface
 {

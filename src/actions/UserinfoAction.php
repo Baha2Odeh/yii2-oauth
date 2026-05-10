@@ -41,7 +41,7 @@ class UserinfoAction extends Action
             $response->setStatusCode(401);
             $response->getHeaders()->set('WWW-Authenticate', 'Bearer realm="oauth"');
             $response->data = [
-                'error'             => 'invalid_token',
+                'error' => 'invalid_token',
                 'error_description' => 'Bearer token is required.',
             ];
             return $response;
@@ -52,7 +52,7 @@ class UserinfoAction extends Action
         if ($userId === null) {
             $response->setStatusCode(400);
             $response->data = [
-                'error'             => 'invalid_request',
+                'error' => 'invalid_request',
                 'error_description' => 'This token is not associated with a user.',
             ];
             return $response;

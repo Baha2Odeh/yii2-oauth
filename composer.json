@@ -1,42 +1,47 @@
 {
-    "name": "baha2odeh/yii2-oauth",
-    "description": "Lightweight OAuth2 authorization server extension for Yii2",
-    "type": "yii2-extension",
-    "license": "MIT",
-    "keywords": ["yii2", "oauth2", "authorization", "authentication"],
-    "require": {
-        "php": ">=8.2",
-        "yiisoft/yii2": "~2.0.54"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^11.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "baha2odeh\\yii2oauth\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "baha2odeh\\yii2oauth\\tests\\": "tests/"
-        }
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
-    "config": {
-        "allow-plugins": {
-            "yiisoft/yii2-composer": true
-        }
-    },
-    "extra": {
-        "yii2-extension": {
-            "bootstrap": "baha2odeh\\yii2oauth\\OAuthModule"
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "baha2odeh/yii2-oauth",
+  "description": "Lightweight OAuth2 authorization server extension for Yii2",
+  "type": "yii2-extension",
+  "license": "MIT",
+  "keywords": [
+    "yii2",
+    "oauth2",
+    "authorization",
+    "authentication"
+  ],
+  "require": {
+    "php": ">=8.2",
+    "yiisoft/yii2": "~2.0.54"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "baha2odeh\\yii2oauth\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "baha2odeh\\yii2oauth\\tests\\": "tests/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true
+    }
+  },
+  "extra": {
+    "yii2-extension": {
+      "bootstrap": "baha2odeh\\yii2oauth\\OAuthModule"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

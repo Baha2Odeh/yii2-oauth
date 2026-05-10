@@ -83,10 +83,10 @@ class AuthorizeAction extends Action
         }
 
         return $this->controller->render($this->viewFile, [
-            'client'   => $authRequest['client'],
-            'scopes'   => $scopes,
-            'state'    => $authRequest['state'] ?? null,
-            'action'   => $this,
+            'client' => $authRequest['client'],
+            'scopes' => $scopes,
+            'state' => $authRequest['state'] ?? null,
+            'action' => $this,
         ]);
     }
 
@@ -126,7 +126,7 @@ class AuthorizeAction extends Action
         \Yii::$app->response->setStatusCode($e->getHttpStatusCode());
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         \Yii::$app->response->data = [
-            'error'             => $e->getErrorCode(),
+            'error' => $e->getErrorCode(),
             'error_description' => $e->getMessage(),
         ];
         return \Yii::$app->response;

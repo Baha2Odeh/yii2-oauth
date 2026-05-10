@@ -6,18 +6,18 @@ use baha2odeh\yii2oauth\contracts\entities\ClientEntityInterface;
 use yii\db\ActiveRecord;
 
 /**
- * @property string      $id
- * @property string      $name
+ * @property string $id
+ * @property string $name
  * @property string|null $secret
- * @property string      $redirect_uris  JSON array
- * @property string      $grant_types    comma-separated
+ * @property string $redirect_uris  JSON array
+ * @property string $grant_types    comma-separated
  * @property string|null $scopes         comma-separated
- * @property int         $is_confidential
- * @property int         $is_active
- * @property int         $require_pkce
- * @property int|null    $user_id
- * @property int         $created_at
- * @property int         $updated_at
+ * @property int $is_confidential
+ * @property int $is_active
+ * @property int $require_pkce
+ * @property int|null $user_id
+ * @property int $created_at
+ * @property int $updated_at
  */
 class OAuthClient extends ActiveRecord implements ClientEntityInterface
 {

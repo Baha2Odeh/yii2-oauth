@@ -81,8 +81,10 @@ class AuthorizationServerTest extends TestCase
 
     public function testValidateAuthorizationRequestDelegatesToMatchingGrant(): void
     {
-        $expected = ['client' => 'stub', 'redirect_uri' => 'https://app.test/cb', 'scopes' => [], 'state' => null,
-                     'code_challenge' => null, 'code_challenge_method' => null, 'grant_type' => 'authorization_code'];
+        $expected = [
+            'client' => 'stub', 'redirect_uri' => 'https://app.test/cb', 'scopes' => [], 'state' => null,
+            'code_challenge' => null, 'code_challenge_method' => null, 'grant_type' => 'authorization_code',
+        ];
 
         $grant = $this->createMock(GrantTypeInterface::class);
         $grant->method('getIdentifier')->willReturn('authorization_code');
@@ -115,8 +117,8 @@ class AuthorizationServerTest extends TestCase
         $grant = $this->createMock(GrantTypeInterface::class);
         $grant->method('getIdentifier')->willReturn('authorization_code');
         $grant->method('completeAuthorizationRequest')
-              ->with(['grant_type' => 'authorization_code'], 'user_1', true)
-              ->willReturn($redirectUri);
+            ->with(['grant_type' => 'authorization_code'], 'user_1', true)
+            ->willReturn($redirectUri);
 
         $this->server->registerGrant($grant);
 

@@ -138,7 +138,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $model->created_at = time();
 
         if (!$model->save()) {
-            throw new \RuntimeException('Failed to persist access token: ' . json_encode($model->errors));
+            throw new \RuntimeException('Failed to persist access token: '.json_encode($model->errors));
         }
 
         $model->setRawToken($raw);
@@ -161,7 +161,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $model->created_at = time();
 
         if (!$model->save()) {
-            throw new \RuntimeException('Failed to persist refresh token: ' . json_encode($model->errors));
+            throw new \RuntimeException('Failed to persist refresh token: '.json_encode($model->errors));
         }
 
         $model->setRawToken($raw);
@@ -178,9 +178,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     ): array {
         $response = [
             'access_token' => $accessToken->getIdentifier(),
-            'token_type'   => 'Bearer',
-            'expires_in'   => $ttl,
-            'scope'        => implode(' ', $accessToken->getScopes()),
+            'token_type' => 'Bearer',
+            'expires_in' => $ttl,
+            'scope' => implode(' ', $accessToken->getScopes()),
         ];
 
         if ($refreshToken !== null) {

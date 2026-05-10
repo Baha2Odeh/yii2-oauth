@@ -57,7 +57,7 @@ Add the module to your application config (`config/web.php`):
 
 'modules' => [
     'oauth' => [
-        'class'          => \baha2odeh\yii2oauth\OAuthModule::class,
+        'class' => \baha2odeh\yii2oauth\OAuthModule::class,
         'userModelClass' => \app\models\User::class,  // your user AR class
     ],
 ],
@@ -65,12 +65,12 @@ Add the module to your application config (`config/web.php`):
 
 The module self-registers these URL rules automatically — no `urlManager` changes needed:
 
-| Method   | URL                       | Description                        |
-|----------|---------------------------|------------------------------------|
-| `GET`    | `/oauth/authorize`        | Authorization consent page         |
-| `POST`   | `/oauth/authorize/approve`| User approves or denies consent    |
-| `POST`   | `/oauth/token`            | Token exchange endpoint            |
-| `GET`    | `/oauth/userinfo`         | Returns authenticated user claims  |
+| Method | URL                        | Description                       |
+|--------|----------------------------|-----------------------------------|
+| `GET`  | `/oauth/authorize`         | Authorization consent page        |
+| `POST` | `/oauth/authorize/approve` | User approves or denies consent   |
+| `POST` | `/oauth/token`             | Token exchange endpoint           |
+| `GET`  | `/oauth/userinfo`          | Returns authenticated user claims |
 
 ### 2. Implement `UserEntityInterface` on your User model
 
@@ -89,7 +89,7 @@ class User extends \yii\db\ActiveRecord implements UserEntityInterface
     {
         return [
             'email' => $this->email,
-            'name'  => $this->username,
+            'name' => $this->username,
         ];
     }
 
@@ -345,7 +345,7 @@ class ApiController extends \yii\rest\Controller
     {
         return array_merge(parent::behaviors(), [
             'oauth' => [
-                'class'    => BearerTokenAuth::class,
+                'class' => BearerTokenAuth::class,
                 'moduleId' => 'oauth',   // matches your module key, default 'oauth'
                 'optional' => false,     // true = let unauthenticated requests through
             ],
@@ -359,7 +359,7 @@ class ApiController extends \yii\rest\Controller
 
         return [
             'user_id' => $token->getUserId(),
-            'scopes'  => $token->getScopes(),
+            'scopes' => $token->getScopes(),
         ];
     }
 }
@@ -371,7 +371,7 @@ When a token is invalid or missing, the filter returns:
 HTTP 401
 WWW-Authenticate: Bearer realm="oauth"
 
-{ "error": "invalid_token", "error_description": "..." }
+{"error": "invalid_token", "error_description": "..."}
 ```
 
 ---
@@ -381,8 +381,8 @@ WWW-Authenticate: Bearer realm="oauth"
 Instead of the default controllers, you can attach the standalone actions to any existing controller:
 
 ```php
-use baha2odeh\yii2oauth\actions\TokenAction;
 use baha2odeh\yii2oauth\actions\AuthorizeAction;
+use baha2odeh\yii2oauth\actions\TokenAction;
 use baha2odeh\yii2oauth\actions\UserinfoAction;
 use baha2odeh\yii2oauth\filters\BearerTokenAuth;
 
@@ -394,8 +394,8 @@ class OAuthController extends \yii\web\Controller
     {
         return [
             'bearer' => [
-                'class'   => BearerTokenAuth::class,
-                'only'    => ['userinfo'],
+                'class' => BearerTokenAuth::class,
+                'only' => ['userinfo'],
             ],
         ];
     }
@@ -403,13 +403,13 @@ class OAuthController extends \yii\web\Controller
     public function actions(): array
     {
         return [
-            'token'     => TokenAction::class,
+            'token' => TokenAction::class,
             'authorize' => [
-                'class'    => AuthorizeAction::class,
+                'class' => AuthorizeAction::class,
                 'viewFile' => '@app/views/oauth/authorize', // override the consent view
                 'loginUrl' => ['/site/login'],
             ],
-            'userinfo'  => UserinfoAction::class,
+            'userinfo' => UserinfoAction::class,
         ];
     }
 }
@@ -421,46 +421,46 @@ class OAuthController extends \yii\web\Controller
 
 ```php
 'modules' => [
-    'oauth' => [
-        'class' => \baha2odeh\yii2oauth\OAuthModule::class,
+        'oauth' => [
+            'class' => \baha2odeh\yii2oauth\OAuthModule::class,
 
-        // ---- Required ----
-        'userModelClass' => \app\models\User::class,
+            // ---- Required ----
+            'userModelClass' => \app\models\User::class,
 
-        // ---- Model overrides (swap any AR class) ----
-        'clientModelClass'       => \app\models\OAuthClient::class,
-        'accessTokenModelClass'  => \baha2odeh\yii2oauth\models\OAuthAccessToken::class,
-        'refreshTokenModelClass' => \baha2odeh\yii2oauth\models\OAuthRefreshToken::class,
-        'authCodeModelClass'     => \baha2odeh\yii2oauth\models\OAuthAuthCode::class,
-        'scopeModelClass'        => \baha2odeh\yii2oauth\models\OAuthScope::class,
+            // ---- Model overrides (swap any AR class) ----
+            'clientModelClass' => \app\models\OAuthClient::class,
+            'accessTokenModelClass' => \baha2odeh\yii2oauth\models\OAuthAccessToken::class,
+            'refreshTokenModelClass' => \baha2odeh\yii2oauth\models\OAuthRefreshToken::class,
+            'authCodeModelClass' => \baha2odeh\yii2oauth\models\OAuthAuthCode::class,
+            'scopeModelClass' => \baha2odeh\yii2oauth\models\OAuthScope::class,
 
-        // ---- Enabled grants ----
-        'enabledGrants' => [
-            'authorization_code',
-            'client_credentials',
-            'password',
-            'refresh_token',
+            // ---- Enabled grants ----
+            'enabledGrants' => [
+                'authorization_code',
+                'client_credentials',
+                'password',
+                'refresh_token',
+            ],
+
+            // ---- Token TTLs (seconds) ----
+            'accessTokenTtl' => 3600,       // 1 hour
+            'refreshTokenTtl' => 2592000,    // 30 days
+            'authCodeTtl' => 600,        // 10 minutes
+
+            // ---- Token entropy ----
+            'tokenBytes' => 32,              // 32 bytes → 64-char hex token
+
+            // ---- PKCE ----
+            // false: PKCE is optional globally; per-client require_pkce column overrides
+            // true:  PKCE required for every client
+            'requirePkce' => false,
+            'allowedPkceMethods' => ['S256', 'plain'],
+
+            // ---- Custom grants ----
+            'customGrants' => [
+                'device_code' => \app\oauth\DeviceCodeGrant::class,
+            ],
         ],
-
-        // ---- Token TTLs (seconds) ----
-        'accessTokenTtl'  => 3600,       // 1 hour
-        'refreshTokenTtl' => 2592000,    // 30 days
-        'authCodeTtl'     => 600,        // 10 minutes
-
-        // ---- Token entropy ----
-        'tokenBytes' => 32,              // 32 bytes → 64-char hex token
-
-        // ---- PKCE ----
-        // false: PKCE is optional globally; per-client require_pkce column overrides
-        // true:  PKCE required for every client
-        'requirePkce'        => false,
-        'allowedPkceMethods' => ['S256', 'plain'],
-
-        // ---- Custom grants ----
-        'customGrants' => [
-            'device_code' => \app\oauth\DeviceCodeGrant::class,
-        ],
-    ],
 ],
 ```
 
@@ -516,7 +516,7 @@ class DeviceCodeGrant extends AbstractGrant
         // ... your device code validation logic ...
 
         $scopes = $this->validateScopes('', $client);
-        $token  = $this->issueAccessToken($client, null, $scopes, $this->accessTokenTtl);
+        $token = $this->issueAccessToken($client, null, $scopes, $this->accessTokenTtl);
 
         return $this->buildTokenResponse($token, null, $this->accessTokenTtl);
     }
@@ -545,12 +545,12 @@ Create a view at any path and set it on the action:
 
 Available variables in the view:
 
-| Variable  | Type                       | Description                             |
-|-----------|----------------------------|-----------------------------------------|
-| `$client` | `ClientEntityInterface`    | The requesting client                   |
-| `$scopes` | `array<string, string>`    | `identifier => description` pairs       |
-| `$state`  | `string\|null`             | The state parameter from the request    |
-| `$action` | `AuthorizeAction`          | The action instance (access `moduleId`) |
+| Variable  | Type                    | Description                             |
+|-----------|-------------------------|-----------------------------------------|
+| `$client` | `ClientEntityInterface` | The requesting client                   |
+| `$scopes` | `array<string, string>` | `identifier => description` pairs       |
+| `$state`  | `string\|null`          | The state parameter from the request    |
+| `$action` | `AuthorizeAction`       | The action instance (access `moduleId`) |
 
 Minimal consent view example:
 
@@ -575,15 +575,16 @@ use yii\helpers\Html;
 
 ## Database Tables
 
-| Table                   | Description                                |
-|-------------------------|--------------------------------------------|
-| `oauth_clients`         | Registered OAuth2 clients                  |
-| `oauth_scopes`          | Available permission scopes                |
-| `oauth_access_tokens`   | Issued access tokens (SHA-256 hashed)      |
-| `oauth_refresh_tokens`  | Refresh tokens linked to access tokens     |
-| `oauth_auth_codes`      | Authorization codes (single-use)           |
+| Table                  | Description                            |
+|------------------------|----------------------------------------|
+| `oauth_clients`        | Registered OAuth2 clients              |
+| `oauth_scopes`         | Available permission scopes            |
+| `oauth_access_tokens`  | Issued access tokens (SHA-256 hashed)  |
+| `oauth_refresh_tokens` | Refresh tokens linked to access tokens |
+| `oauth_auth_codes`     | Authorization codes (single-use)       |
 
-Token values are **never stored in plain text**. The SHA-256 hash is stored; the raw value is returned to the client once and never held server-side.
+Token values are **never stored in plain text**. The SHA-256 hash is stored; the raw value is returned to the client
+once and never held server-side.
 
 ---
 
@@ -592,7 +593,8 @@ Token values are **never stored in plain text**. The SHA-256 hash is stored; the
 - **Client secrets** are stored as bcrypt hashes (`Yii::$app->security->generatePasswordHash`).
 - **Tokens** are stored as SHA-256 hashes. Compromise of the database does not expose usable tokens.
 - **Authorization codes** are single-use and expire in 10 minutes by default.
-- **PKCE** is strongly recommended for public clients (SPAs, mobile apps). Enable it per-client with `require_pkce = 1` or globally with `'requirePkce' => true`.
+- **PKCE** is strongly recommended for public clients (SPAs, mobile apps). Enable it per-client with `require_pkce = 1`
+  or globally with `'requirePkce' => true`.
 - The token endpoint sets `Cache-Control: no-store` and `Pragma: no-cache` on every response.
 - CSRF validation is disabled only on the token endpoint (OAuth2 spec requirement).
 

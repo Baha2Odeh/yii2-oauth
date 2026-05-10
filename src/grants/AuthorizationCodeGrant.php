@@ -75,17 +75,17 @@ class AuthorizationCodeGrant extends AbstractGrant
         if (!empty($codeChallenge)) {
             if (!in_array($codeChallengeMethod, $this->allowedPkceMethods, true)) {
                 throw new InvalidRequestException(
-                    'Unsupported code_challenge_method. Allowed: ' . implode(', ', $this->allowedPkceMethods)
+                    'Unsupported code_challenge_method. Allowed: '.implode(', ', $this->allowedPkceMethods)
                 );
             }
         }
 
         return [
-            'client'                => $client,
-            'redirect_uri'          => $redirectUri,
-            'scopes'                => $scopes,
-            'state'                 => $request->get('state'),
-            'code_challenge'        => !empty($codeChallenge) ? $codeChallenge : null,
+            'client' => $client,
+            'redirect_uri' => $redirectUri,
+            'scopes' => $scopes,
+            'state' => $request->get('state'),
+            'code_challenge' => !empty($codeChallenge) ? $codeChallenge : null,
             'code_challenge_method' => !empty($codeChallenge) ? $codeChallengeMethod : null,
         ];
     }
@@ -97,9 +97,9 @@ class AuthorizationCodeGrant extends AbstractGrant
 
         if (!$approved) {
             return $this->buildRedirectUri($redirectUri, [
-                'error'             => 'access_denied',
+                'error' => 'access_denied',
                 'error_description' => 'The user denied the authorization request.',
-                'state'             => $state,
+                'state' => $state,
             ]);
         }
 
@@ -120,11 +120,11 @@ class AuthorizationCodeGrant extends AbstractGrant
         $model->created_at = time();
 
         if (!$model->save()) {
-            throw new \RuntimeException('Failed to persist auth code: ' . json_encode($model->errors));
+            throw new \RuntimeException('Failed to persist auth code: '.json_encode($model->errors));
         }
 
         return $this->buildRedirectUri($redirectUri, array_filter([
-            'code'  => $raw,
+            'code' => $raw,
             'state' => $state,
         ]));
     }
@@ -161,13 +161,15 @@ class AuthorizationCodeGrant extends AbstractGrant
             if (empty($codeVerifier)) {
                 throw new InvalidRequestException('Missing code_verifier.');
             }
-            $this->verifyPkce($codeVerifier, $authCode->getCodeChallenge(), $authCode->getCodeChallengeMethod() ?? 'S256');
+            $this->verifyPkce($codeVerifier, $authCode->getCodeChallenge(),
+                $authCode->getCodeChallengeMethod() ?? 'S256');
         }
 
         // Revoke auth code (single-use)
         $authCodeModelClass::revokeByRawCode($rawCode);
 
-        $accessToken = $this->issueAccessToken($client, $authCode->getUserId(), $authCode->getScopes(), $this->accessTokenTtl);
+        $accessToken = $this->issueAccessToken($client, $authCode->getUserId(), $authCode->getScopes(),
+            $this->accessTokenTtl);
         $refreshToken = $this->issueRefreshToken($accessToken, $this->refreshTokenTtl);
 
         return $this->buildTokenResponse($accessToken, $refreshToken, $this->accessTokenTtl);
@@ -190,6 +192,6 @@ class AuthorizationCodeGrant extends AbstractGrant
     {
         $params = array_filter($params, fn($v) => $v !== null && $v !== '');
         $separator = str_contains($base, '?') ? '&' : '?';
-        return $base . $separator . http_build_query($params);
+        return $base.$separator.http_build_query($params);
     }
 }

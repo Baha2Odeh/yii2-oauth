@@ -12,7 +12,7 @@ class OAuthClientTest extends TestCase
     private function makeClient(array $overrides = []): OAuthClient
     {
         $client = new OAuthClient();
-        $client->id = $overrides['id'] ?? 'client_' . uniqid();
+        $client->id = $overrides['id'] ?? 'client_'.uniqid();
         $client->name = $overrides['name'] ?? 'Test Client';
         $client->secret = $overrides['secret'] ?? $this->hashPassword('secret123');
         $client->redirect_uris = $overrides['redirect_uris'] ?? json_encode(['https://app.test/cb']);
@@ -128,10 +128,10 @@ class OAuthClientTest extends TestCase
     {
         $rawSecret = 'correct_secret';
         $this->makeClient([
-            'id'         => 'valid_client',
-            'secret'     => $this->hashPassword($rawSecret),
+            'id' => 'valid_client',
+            'secret' => $this->hashPassword($rawSecret),
             'grant_types' => 'client_credentials',
-            'is_active'  => 1,
+            'is_active' => 1,
         ]);
 
         $result = OAuthClient::validateCredentials('valid_client', $rawSecret, 'client_credentials');
@@ -143,8 +143,8 @@ class OAuthClientTest extends TestCase
     public function testValidateCredentialsFailsOnWrongSecret(): void
     {
         $this->makeClient([
-            'id'         => 'bad_secret_client',
-            'secret'     => $this->hashPassword('correct'),
+            'id' => 'bad_secret_client',
+            'secret' => $this->hashPassword('correct'),
             'grant_types' => 'client_credentials',
         ]);
 
@@ -156,8 +156,8 @@ class OAuthClientTest extends TestCase
     public function testValidateCredentialsFailsOnDisallowedGrant(): void
     {
         $this->makeClient([
-            'id'         => 'grant_mismatch_client',
-            'secret'     => $this->hashPassword('secret'),
+            'id' => 'grant_mismatch_client',
+            'secret' => $this->hashPassword('secret'),
             'grant_types' => 'authorization_code',
         ]);
 
@@ -169,10 +169,10 @@ class OAuthClientTest extends TestCase
     public function testValidateCredentialsFailsForInactiveClient(): void
     {
         $this->makeClient([
-            'id'         => 'inactive_check',
-            'secret'     => $this->hashPassword('secret'),
+            'id' => 'inactive_check',
+            'secret' => $this->hashPassword('secret'),
             'grant_types' => 'client_credentials',
-            'is_active'  => 0,
+            'is_active' => 0,
         ]);
 
         $this->assertNull(OAuthClient::validateCredentials('inactive_check', 'secret', 'client_credentials'));

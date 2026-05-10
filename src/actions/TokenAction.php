@@ -42,7 +42,7 @@ class TokenAction extends Action
         } catch (OAuthException $e) {
             $response->setStatusCode($e->getHttpStatusCode());
             $response->data = [
-                'error'             => $e->getErrorCode(),
+                'error' => $e->getErrorCode(),
                 'error_description' => $e->getMessage(),
             ];
         }
