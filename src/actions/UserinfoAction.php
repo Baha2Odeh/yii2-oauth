@@ -64,7 +64,10 @@ class UserinfoAction extends Action
 
         if (empty($userModelClass)) {
             $response->setStatusCode(500);
-            $response->data = ['error' => 'server_error', 'error_description' => 'userModelClass is not configured.'];
+            $response->data = [
+                'error'             => 'server_error',
+                'error_description' => 'userModelClass is not configured.',
+            ];
             return $response;
         }
 
@@ -72,7 +75,10 @@ class UserinfoAction extends Action
 
         if ($user === null) {
             $response->setStatusCode(404);
-            $response->data = ['error' => 'not_found', 'error_description' => 'User not found.'];
+            $response->data = [
+                'error'             => 'not_found',
+                'error_description' => 'User not found.',
+            ];
             return $response;
         }
 

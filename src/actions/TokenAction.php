@@ -5,6 +5,7 @@ namespace baha2odeh\yii2oauth\actions;
 use baha2odeh\yii2oauth\exceptions\OAuthException;
 use baha2odeh\yii2oauth\OAuthModule;
 use yii\base\Action;
+use yii\web\Response;
 
 /**
  * Standalone action: handles POST token requests.
@@ -25,10 +26,10 @@ class TokenAction extends Action
     /** OAuth module ID to resolve the authorization server from. */
     public string $moduleId = 'oauth';
 
-    public function run(): \yii\web\Response
+    public function run(): Response
     {
         $response = \Yii::$app->response;
-        $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->format = Response::FORMAT_JSON;
         $response->getHeaders()->set('Cache-Control', 'no-store');
         $response->getHeaders()->set('Pragma', 'no-cache');
 

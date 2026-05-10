@@ -13,9 +13,11 @@ use baha2odeh\yii2oauth\models\OAuthRefreshToken;
 use baha2odeh\yii2oauth\models\OAuthScope;
 use baha2odeh\yii2oauth\services\AuthorizationServer;
 use baha2odeh\yii2oauth\services\TokenGenerator;
-use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
+use yii\console\Application as ConsoleApplication;
+use yii\web\Application as WebApplication;
+use yii\web\UrlRule;
 
 class OAuthModule extends Module implements BootstrapInterface
 {
@@ -77,7 +79,7 @@ class OAuthModule extends Module implements BootstrapInterface
         parent::init();
 
         if (empty($this->controllerNamespace)) {
-            $this->controllerNamespace = \Yii::$app instanceof \yii\console\Application
+            $this->controllerNamespace = \Yii::$app instanceof ConsoleApplication
                 ? 'baha2odeh\yii2oauth\controllers\console'
                 : 'baha2odeh\yii2oauth\controllers';
         }
@@ -94,37 +96,37 @@ class OAuthModule extends Module implements BootstrapInterface
      */
     public function bootstrap($app): void
     {
-        if ($app instanceof \yii\web\Application) {
+        if ($app instanceof WebApplication) {
             $app->getUrlManager()->addRules([
                 [
-                    'class'   => \yii\web\UrlRule::class,
+                    'class'   => UrlRule::class,
                     'pattern' => $this->id . '/token',
                     'route'   => $this->id . '/token/token',
                     'verb'    => 'POST',
                 ],
                 [
-                    'class'   => \yii\web\UrlRule::class,
+                    'class'   => UrlRule::class,
                     'pattern' => $this->id . '/authorize',
                     'route'   => $this->id . '/authorize/index',
                 ],
                 [
-                    'class'   => \yii\web\UrlRule::class,
+                    'class'   => UrlRule::class,
                     'pattern' => $this->id . '/authorize/approve',
                     'route'   => $this->id . '/authorize/approve',
                     'verb'    => 'POST',
                 ],
                 [
-                    'class'    => \yii\web\UrlRule::class,
-                    'pattern'  => $this->id . '/userinfo',
-                    'route'    => $this->id . '/userinfo/index',
-                    'verb'     => ['GET', 'POST'],
+                    'class'   => UrlRule::class,
+                    'pattern' => $this->id . '/userinfo',
+                    'route'   => $this->id . '/userinfo/index',
+                    'verb'    => ['GET', 'POST'],
                 ],
             ], false);
         }
 
-        if ($app instanceof \yii\console\Application) {
+        if ($app instanceof ConsoleApplication) {
             $app->controllerMap[$this->id . '/client'] = [
-                'class' => controllers\console\ClientController::class,
+                'class'    => controllers\console\ClientController::class,
                 'moduleId' => $this->id,
             ];
         }

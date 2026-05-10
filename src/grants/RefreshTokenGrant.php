@@ -4,6 +4,7 @@ namespace baha2odeh\yii2oauth\grants;
 
 use baha2odeh\yii2oauth\exceptions\InvalidGrantException;
 use baha2odeh\yii2oauth\exceptions\InvalidRequestException;
+use baha2odeh\yii2oauth\exceptions\InvalidScopeException;
 use baha2odeh\yii2oauth\services\TokenGenerator;
 use yii\web\Request;
 
@@ -53,7 +54,7 @@ class RefreshTokenGrant extends AbstractGrant
             $original = $oldAccessToken->getScopes();
             foreach ($requested as $scope) {
                 if (!in_array($scope, $original, true)) {
-                    throw new \baha2odeh\yii2oauth\exceptions\InvalidScopeException(
+                    throw new InvalidScopeException(
                         "Scope '{$scope}' was not granted in the original token."
                     );
                 }

@@ -4,6 +4,7 @@ namespace baha2odeh\yii2oauth\grants;
 
 use baha2odeh\yii2oauth\exceptions\InvalidGrantException;
 use baha2odeh\yii2oauth\exceptions\InvalidRequestException;
+use baha2odeh\yii2oauth\exceptions\UnauthorizedClientException;
 use baha2odeh\yii2oauth\models\OAuthAuthCode;
 use baha2odeh\yii2oauth\services\TokenGenerator;
 use yii\web\Request;
@@ -41,7 +42,7 @@ class AuthorizationCodeGrant extends AbstractGrant
         }
 
         if (!in_array('authorization_code', $client->getAllowedGrantTypes(), true)) {
-            throw new \baha2odeh\yii2oauth\exceptions\UnauthorizedClientException(
+            throw new UnauthorizedClientException(
                 'Client is not authorized for the authorization_code grant.'
             );
         }

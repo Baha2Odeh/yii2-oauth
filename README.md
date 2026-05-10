@@ -602,10 +602,48 @@ Token values are **never stored in plain text**. The SHA-256 hash is stored; the
 
 ```bash
 composer install
-vendor/bin/phpunit
+composer test
 ```
 
 Tests use an **in-memory SQLite database** — no external dependencies required.
+
+---
+
+## Code Style
+
+This project follows the [Yii2 coding style](https://github.com/yiisoft/yii2/blob/master/docs/internals/core-code-style.md),
+which is PSR-2 based with these additional conventions:
+
+- Short array syntax (`[]`)
+- Alphabetically ordered `use` imports, no unused imports
+- Fat-arrows (`=>`) aligned in multi-line arrays
+- Single-quoted strings where interpolation is not needed
+- Trailing commas in multi-line arrays and parameter lists
+- One space around concatenation (`.`) and casts (`(int)`)
+- Proper type declarations on all methods
+
+### Checking and fixing code style
+
+After `composer install`, two scripts are available:
+
+```bash
+# Auto-fix all style violations
+composer cs-fix
+
+# Dry-run — exit 1 if any file would change (use in CI)
+composer cs-check
+```
+
+The formatter is powered by [PHP CS Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer)
+and is configured in [`.php-cs-fixer.php`](.php-cs-fixer.php).
+
+> **Tip:** add `composer cs-fix` to your pre-commit hook so the code is always
+> formatted before it reaches the repository:
+>
+> ```bash
+> echo "composer cs-fix" >> .git/hooks/pre-commit
+> chmod +x .git/hooks/pre-commit
+> ```
 
 ---
 

@@ -9,7 +9,8 @@
         "yiisoft/yii2": "~2.0.54"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.0"
+        "phpunit/phpunit": "^11.0",
+        "friendsofphp/php-cs-fixer": "^3.0"
     },
     "autoload": {
         "psr-4": {
@@ -36,6 +37,11 @@
         "yii2-extension": {
             "bootstrap": "baha2odeh\\yii2oauth\\OAuthModule"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "cs-fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php",
+        "cs-check": "vendor/bin/php-cs-fixer check --config=.php-cs-fixer.php --diff"
     },
     "minimum-stability": "stable",
     "prefer-stable": true

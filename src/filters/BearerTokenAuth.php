@@ -4,6 +4,7 @@ namespace baha2odeh\yii2oauth\filters;
 
 use baha2odeh\yii2oauth\OAuthModule;
 use yii\base\ActionFilter;
+use yii\web\Response;
 
 /**
  * Action filter that authenticates requests via OAuth2 Bearer tokens.
@@ -84,7 +85,7 @@ class BearerTokenAuth extends ActionFilter
         $response = \Yii::$app->response;
         $response->setStatusCode(401);
         $response->getHeaders()->set('WWW-Authenticate', 'Bearer realm="oauth"');
-        $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->format = Response::FORMAT_JSON;
         $response->data = [
             'error'             => 'invalid_token',
             'error_description' => 'The access token provided is missing, invalid, or expired.',

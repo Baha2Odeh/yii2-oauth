@@ -124,7 +124,7 @@ class AuthorizeAction extends Action
     private function renderError(OAuthException $e): Response
     {
         \Yii::$app->response->setStatusCode($e->getHttpStatusCode());
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        \Yii::$app->response->format = Response::FORMAT_JSON;
         \Yii::$app->response->data = [
             'error'             => $e->getErrorCode(),
             'error_description' => $e->getMessage(),

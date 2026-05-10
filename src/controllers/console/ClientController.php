@@ -2,10 +2,10 @@
 
 namespace baha2odeh\yii2oauth\controllers\console;
 
-use baha2odeh\yii2oauth\models\OAuthClient;
 use baha2odeh\yii2oauth\models\OAuthAccessToken;
-use baha2odeh\yii2oauth\models\OAuthRefreshToken;
 use baha2odeh\yii2oauth\models\OAuthAuthCode;
+use baha2odeh\yii2oauth\models\OAuthClient;
+use baha2odeh\yii2oauth\models\OAuthRefreshToken;
 use baha2odeh\yii2oauth\models\OAuthScope;
 use baha2odeh\yii2oauth\OAuthModule;
 use yii\console\Controller;
@@ -181,13 +181,13 @@ class ClientController extends Controller
         $refreshTokenModelClass = $module->refreshTokenModelClass;
         $authCodeModelClass = $module->authCodeModelClass;
 
+        // Cascade: collect access-token hashes before deleting them
+        $accessTokenIds = array_column(
+            $accessTokenModelClass::find()->select('id')->where(['client_id' => $clientId])->asArray()->all(),
+            'id'
+        );
+        $refreshTokenModelClass::deleteAll(['access_token_id' => $accessTokenIds]);
         $accessTokenModelClass::deleteAll(['client_id' => $clientId]);
-        $refreshTokenModelClass::deleteAll(['access_token_id' => // refresh tokens linked indirectly
-            array_column(
-                $accessTokenModelClass::find()->select('id')->where(['client_id' => $clientId])->asArray()->all(),
-                'id'
-            )
-        ]);
         $authCodeModelClass::deleteAll(['client_id' => $clientId]);
         $client->delete();
 
