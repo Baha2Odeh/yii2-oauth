@@ -169,4 +169,88 @@ class OAuthAccessTokenTest extends TestCase
 
         $this->assertNull(OAuthAccessToken::findByRawToken($raw));
     }
+
+    public function testHasActiveTokenReturnsTrueWhenValidTokenExists(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile', 'email']),
+        ]);
+
+        $this->assertTrue(OAuthAccessToken::hasActiveToken('10', 'app_client', ['profile', 'email']));
+    }
+
+    public function testHasActiveTokenReturnsTrueForSubsetOfScopes(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile', 'email']),
+        ]);
+
+        $this->assertTrue(OAuthAccessToken::hasActiveToken('10', 'app_client', ['profile']));
+    }
+
+    public function testHasActiveTokenReturnsFalseWhenScopesMissing(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile']),
+        ]);
+
+        $this->assertFalse(OAuthAccessToken::hasActiveToken('10', 'app_client', ['profile', 'email']));
+    }
+
+    public function testHasActiveTokenReturnsFalseForRevokedToken(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile']),
+            'revoked' => 1,
+        ]);
+
+        $this->assertFalse(OAuthAccessToken::hasActiveToken('10', 'app_client', ['profile']));
+    }
+
+    public function testHasActiveTokenReturnsFalseForExpiredToken(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile']),
+            'expires_at' => time() - 1,
+        ]);
+
+        $this->assertFalse(OAuthAccessToken::hasActiveToken('10', 'app_client', ['profile']));
+    }
+
+    public function testHasActiveTokenReturnsFalseForDifferentUser(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile']),
+        ]);
+
+        $this->assertFalse(OAuthAccessToken::hasActiveToken('99', 'app_client', ['profile']));
+    }
+
+    public function testHasActiveTokenReturnsFalseForDifferentClient(): void
+    {
+        $this->makeToken([
+            'user_id' => '10',
+            'client_id' => 'app_client',
+            'scopes' => json_encode(['profile']),
+        ]);
+
+        $this->assertFalse(OAuthAccessToken::hasActiveToken('10', 'other_client', ['profile']));
+    }
+
+    public function testHasActiveTokenReturnsFalseWhenNoTokenExists(): void
+    {
+        $this->assertFalse(OAuthAccessToken::hasActiveToken('10', 'app_client', ['profile']));
+    }
 }
