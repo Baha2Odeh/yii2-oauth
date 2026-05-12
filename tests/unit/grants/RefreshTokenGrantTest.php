@@ -186,8 +186,13 @@ class RefreshTokenGrantTest extends GrantTestCase
         return [$atRaw, $rtRaw];
     }
 
-    private function persistAccessToken(string $raw, string $clientId, string $userId, array $scopes, int $expiresAt): OAuthAccessToken
-    {
+    private function persistAccessToken(
+        string $raw,
+        string $clientId,
+        string $userId,
+        array $scopes,
+        int $expiresAt
+    ): OAuthAccessToken {
         $at = new OAuthAccessToken();
         $at->id = TokenGenerator::hash($raw);
         $at->client_id = $clientId;

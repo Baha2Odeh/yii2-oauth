@@ -10,7 +10,6 @@ use baha2odeh\yii2oauth\exceptions\UnauthorizedClientException;
 use baha2odeh\yii2oauth\grants\AuthorizationCodeGrant;
 use baha2odeh\yii2oauth\models\OAuthAccessToken;
 use baha2odeh\yii2oauth\models\OAuthAuthCode;
-use baha2odeh\yii2oauth\models\OAuthRefreshToken;
 use baha2odeh\yii2oauth\services\TokenGenerator;
 use baha2odeh\yii2oauth\tests\support\MockRequest;
 
@@ -25,10 +24,10 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $this->grant = new AuthorizationCodeGrant(array_merge(
             $this->grantConfig(),
             [
-                'authCodeModelClass'   => OAuthAuthCode::class,
-                'authCodeTtl'          => 600,
-                'requirePkce'          => false,
-                'allowedPkceMethods'   => ['S256', 'plain'],
+                'authCodeModelClass' => OAuthAuthCode::class,
+                'authCodeTtl' => 600,
+                'requirePkce' => false,
+                'allowedPkceMethods' => ['S256', 'plain'],
             ]
         ));
     }
@@ -63,10 +62,10 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $req = new MockRequest();
         $req->setQueryParams([
             'response_type' => 'code',
-            'client_id'     => 'ac_val_client',
-            'redirect_uri'  => 'https://app.test/cb',
-            'scope'         => '',
-            'state'         => 'xyz123',
+            'client_id' => 'ac_val_client',
+            'redirect_uri' => 'https://app.test/cb',
+            'scope' => '',
+            'state' => 'xyz123',
         ]);
 
         $result = $this->grant->validateAuthorizationRequest($req);
@@ -107,8 +106,8 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $req = new MockRequest();
         $req->setQueryParams([
             'response_type' => 'code',
-            'client_id'     => 'ac_redir_client',
-            'redirect_uri'  => 'https://evil.com/cb',
+            'client_id' => 'ac_redir_client',
+            'redirect_uri' => 'https://evil.com/cb',
         ]);
 
         $this->expectException(InvalidRequestException::class);
@@ -122,8 +121,8 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $req = new MockRequest();
         $req->setQueryParams([
             'response_type' => 'code',
-            'client_id'     => 'ac_wrong_grant',
-            'redirect_uri'  => 'https://app.test/cb',
+            'client_id' => 'ac_wrong_grant',
+            'redirect_uri' => 'https://app.test/cb',
         ]);
 
         $this->expectException(UnauthorizedClientException::class);
@@ -137,11 +136,11 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $this->seedConfidentialClient('ac_complete_client', 'secret', 'authorization_code');
 
         $authRequest = [
-            'client'               => \baha2odeh\yii2oauth\models\OAuthClient::findActive('ac_complete_client'),
-            'redirect_uri'         => 'https://app.test/cb',
-            'scopes'               => [],
-            'state'                => 'state_abc',
-            'code_challenge'       => null,
+            'client' => \baha2odeh\yii2oauth\models\OAuthClient::findActive('ac_complete_client'),
+            'redirect_uri' => 'https://app.test/cb',
+            'scopes' => [],
+            'state' => 'state_abc',
+            'code_challenge' => null,
             'code_challenge_method' => null,
         ];
 
@@ -157,11 +156,11 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $this->seedConfidentialClient('ac_deny_client', 'secret', 'authorization_code');
 
         $authRequest = [
-            'client'               => \baha2odeh\yii2oauth\models\OAuthClient::findActive('ac_deny_client'),
-            'redirect_uri'         => 'https://app.test/cb',
-            'scopes'               => [],
-            'state'                => 'state_xyz',
-            'code_challenge'       => null,
+            'client' => \baha2odeh\yii2oauth\models\OAuthClient::findActive('ac_deny_client'),
+            'redirect_uri' => 'https://app.test/cb',
+            'scopes' => [],
+            'state' => 'state_xyz',
+            'code_challenge' => null,
             'code_challenge_method' => null,
         ];
 
@@ -177,11 +176,11 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $this->seedConfidentialClient('ac_persist_client', 'secret', 'authorization_code');
 
         $authRequest = [
-            'client'               => \baha2odeh\yii2oauth\models\OAuthClient::findActive('ac_persist_client'),
-            'redirect_uri'         => 'https://app.test/cb',
-            'scopes'               => ['read'],
-            'state'                => null,
-            'code_challenge'       => null,
+            'client' => \baha2odeh\yii2oauth\models\OAuthClient::findActive('ac_persist_client'),
+            'redirect_uri' => 'https://app.test/cb',
+            'scopes' => ['read'],
+            'state' => null,
+            'code_challenge' => null,
             'code_challenge_method' => null,
         ];
 
@@ -295,16 +294,16 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $this->seedConfidentialClient('ac_pkce_client', 'secret', 'authorization_code,refresh_token');
 
         // Generate PKCE pair
-        $verifier  = bin2hex(random_bytes(32));
+        $verifier = bin2hex(random_bytes(32));
         $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
 
         $rawCode = $this->issueAuthCode('ac_pkce_client', 'user_1', [], $challenge, 'S256');
 
         $request = $this->requestWithBasicAuth(
             [
-                'grant_type'    => 'authorization_code',
-                'code'          => $rawCode,
-                'redirect_uri'  => 'https://app.test/cb',
+                'grant_type' => 'authorization_code',
+                'code' => $rawCode,
+                'redirect_uri' => 'https://app.test/cb',
                 'code_verifier' => $verifier,
             ],
             'ac_pkce_client',
@@ -319,16 +318,16 @@ class AuthorizationCodeGrantTest extends GrantTestCase
     {
         $this->seedConfidentialClient('ac_pkce_fail_client', 'secret', 'authorization_code');
 
-        $verifier  = bin2hex(random_bytes(32));
+        $verifier = bin2hex(random_bytes(32));
         $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
 
         $rawCode = $this->issueAuthCode('ac_pkce_fail_client', 'user_1', [], $challenge, 'S256');
 
         $request = $this->requestWithBasicAuth(
             [
-                'grant_type'    => 'authorization_code',
-                'code'          => $rawCode,
-                'redirect_uri'  => 'https://app.test/cb',
+                'grant_type' => 'authorization_code',
+                'code' => $rawCode,
+                'redirect_uri' => 'https://app.test/cb',
                 'code_verifier' => 'wrong_verifier_value',
             ],
             'ac_pkce_fail_client',
@@ -343,9 +342,9 @@ class AuthorizationCodeGrantTest extends GrantTestCase
     {
         $this->seedConfidentialClient('ac_pkce_no_verifier', 'secret', 'authorization_code');
 
-        $verifier  = bin2hex(random_bytes(32));
+        $verifier = bin2hex(random_bytes(32));
         $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
-        $rawCode   = $this->issueAuthCode('ac_pkce_no_verifier', 'user_1', [], $challenge, 'S256');
+        $rawCode = $this->issueAuthCode('ac_pkce_no_verifier', 'user_1', [], $challenge, 'S256');
 
         $request = $this->requestWithBasicAuth(
             ['grant_type' => 'authorization_code', 'code' => $rawCode, 'redirect_uri' => 'https://app.test/cb'],
@@ -362,14 +361,14 @@ class AuthorizationCodeGrantTest extends GrantTestCase
     {
         $this->seedConfidentialClient('ac_pkce_plain_client', 'secret', 'authorization_code,refresh_token');
 
-        $verifier  = bin2hex(random_bytes(32));
-        $rawCode   = $this->issueAuthCode('ac_pkce_plain_client', 'user_1', [], $verifier, 'plain');
+        $verifier = bin2hex(random_bytes(32));
+        $rawCode = $this->issueAuthCode('ac_pkce_plain_client', 'user_1', [], $verifier, 'plain');
 
         $request = $this->requestWithBasicAuth(
             [
-                'grant_type'    => 'authorization_code',
-                'code'          => $rawCode,
-                'redirect_uri'  => 'https://app.test/cb',
+                'grant_type' => 'authorization_code',
+                'code' => $rawCode,
+                'redirect_uri' => 'https://app.test/cb',
                 'code_verifier' => $verifier,
             ],
             'ac_pkce_plain_client',
@@ -387,8 +386,8 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $req = new MockRequest();
         $req->setQueryParams([
             'response_type' => 'code',
-            'client_id'     => 'ac_pkce_required_client',
-            'redirect_uri'  => 'https://app.test/cb',
+            'client_id' => 'ac_pkce_required_client',
+            'redirect_uri' => 'https://app.test/cb',
         ]);
 
         $this->expectException(InvalidRequestException::class);
@@ -399,8 +398,10 @@ class AuthorizationCodeGrantTest extends GrantTestCase
     {
         $grant = new AuthorizationCodeGrant(array_merge(
             $this->grantConfig(),
-            ['authCodeModelClass' => OAuthAuthCode::class, 'authCodeTtl' => 600,
-             'requirePkce' => true, 'allowedPkceMethods' => ['S256']]
+            [
+                'authCodeModelClass' => OAuthAuthCode::class, 'authCodeTtl' => 600,
+                'requirePkce' => true, 'allowedPkceMethods' => ['S256'],
+            ]
         ));
 
         $this->seedConfidentialClient('ac_module_pkce_client', 'secret', 'authorization_code');
@@ -408,8 +409,8 @@ class AuthorizationCodeGrantTest extends GrantTestCase
         $req = new MockRequest();
         $req->setQueryParams([
             'response_type' => 'code',
-            'client_id'     => 'ac_module_pkce_client',
-            'redirect_uri'  => 'https://app.test/cb',
+            'client_id' => 'ac_module_pkce_client',
+            'redirect_uri' => 'https://app.test/cb',
         ]);
 
         $this->expectException(InvalidRequestException::class);

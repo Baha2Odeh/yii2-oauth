@@ -3,10 +3,6 @@
 namespace baha2odeh\yii2oauth\controllers\console;
 
 use baha2odeh\yii2oauth\models\OAuthClient;
-use baha2odeh\yii2oauth\models\OAuthAccessToken;
-use baha2odeh\yii2oauth\models\OAuthRefreshToken;
-use baha2odeh\yii2oauth\models\OAuthAuthCode;
-use baha2odeh\yii2oauth\models\OAuthScope;
 use baha2odeh\yii2oauth\OAuthModule;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -35,6 +31,7 @@ class ClientController extends Controller
     public string $grantTypes = 'authorization_code,refresh_token';
     public string $scopes = '';
     public int $confidential = 1;
+    public ?int $requirePkce = 0;
 
     public function options($actionId): array
     {
@@ -42,7 +39,7 @@ class ClientController extends Controller
 
         return match ($actionId) {
             'create' => array_merge($base, ['name', 'redirectUris', 'grantTypes', 'scopes', 'confidential']),
-            default  => $base,
+            default => $base,
         };
     }
 
@@ -98,7 +95,7 @@ class ClientController extends Controller
         $client->scopes = $this->scopes ?: null;
         $client->is_confidential = (int) $this->confidential;
         $client->is_active = 1;
-        $client->require_pkce = 0;
+        $client->require_pkce = $this->requirePkce ?? 0;
 
         if (!$client->save()) {
             $this->stderr("Failed to create client:\n", Console::FG_RED);
@@ -138,16 +135,16 @@ class ClientController extends Controller
             return ExitCode::OK;
         }
 
-        $this->stdout(str_pad('ID', 22) . str_pad('Name', 30) . str_pad('Grant Types', 40) . "Active\n", Console::BOLD);
-        $this->stdout(str_repeat('-', 100) . "\n");
+        $this->stdout(str_pad('ID', 22).str_pad('Name', 30).str_pad('Grant Types', 40)."Active\n", Console::BOLD);
+        $this->stdout(str_repeat('-', 100)."\n");
 
         foreach ($clients as $client) {
             $active = $client->is_active ? 'Yes' : 'No';
             $this->stdout(
-                str_pad($client->id, 22) .
-                str_pad(mb_substr($client->name, 0, 28), 30) .
-                str_pad($client->grant_types, 40) .
-                $active . "\n"
+                str_pad($client->id, 22).
+                str_pad(mb_substr($client->name, 0, 28), 30).
+                str_pad($client->grant_types, 40).
+                $active."\n"
             );
         }
 
@@ -157,7 +154,7 @@ class ClientController extends Controller
     /**
      * Delete a client and all associated tokens.
      *
-     * @param string $clientId
+     * @param  string  $clientId
      */
     public function actionDelete(string $clientId): int
     {
@@ -182,11 +179,12 @@ class ClientController extends Controller
         $authCodeModelClass = $module->authCodeModelClass;
 
         $accessTokenModelClass::deleteAll(['client_id' => $clientId]);
-        $refreshTokenModelClass::deleteAll(['access_token_id' => // refresh tokens linked indirectly
-            array_column(
-                $accessTokenModelClass::find()->select('id')->where(['client_id' => $clientId])->asArray()->all(),
-                'id'
-            )
+        $refreshTokenModelClass::deleteAll([
+            'access_token_id' => // refresh tokens linked indirectly
+                array_column(
+                    $accessTokenModelClass::find()->select('id')->where(['client_id' => $clientId])->asArray()->all(),
+                    'id'
+                ),
         ]);
         $authCodeModelClass::deleteAll(['client_id' => $clientId]);
         $client->delete();
@@ -199,7 +197,7 @@ class ClientController extends Controller
     /**
      * Deactivate a client (reversible).
      *
-     * @param string $clientId
+     * @param  string  $clientId
      */
     public function actionDeactivate(string $clientId): int
     {
@@ -209,7 +207,7 @@ class ClientController extends Controller
     /**
      * Activate a previously deactivated client.
      *
-     * @param string $clientId
+     * @param  string  $clientId
      */
     public function actionActivate(string $clientId): int
     {
@@ -219,7 +217,7 @@ class ClientController extends Controller
     /**
      * Rotate a client's secret (confidential clients only).
      *
-     * @param string $clientId
+     * @param  string  $clientId
      */
     public function actionResetSecret(string $clientId): int
     {
@@ -267,14 +265,14 @@ class ClientController extends Controller
             return ExitCode::OK;
         }
 
-        $this->stdout(str_pad('Identifier', 25) . str_pad('Description', 50) . "Default\n", Console::BOLD);
-        $this->stdout(str_repeat('-', 85) . "\n");
+        $this->stdout(str_pad('Identifier', 25).str_pad('Description', 50)."Default\n", Console::BOLD);
+        $this->stdout(str_repeat('-', 85)."\n");
 
         foreach ($scopes as $scope) {
             $this->stdout(
-                str_pad($scope->identifier, 25) .
-                str_pad(mb_substr($scope->description ?? '', 0, 48), 50) .
-                ($scope->is_default ? 'Yes' : 'No') . "\n"
+                str_pad($scope->identifier, 25).
+                str_pad(mb_substr($scope->description ?? '', 0, 48), 50).
+                ($scope->is_default ? 'Yes' : 'No')."\n"
             );
         }
 
@@ -284,9 +282,9 @@ class ClientController extends Controller
     /**
      * Register a new scope.
      *
-     * @param string $identifier  Scope identifier, e.g. 'openid'
-     * @param string $description Human-readable description
-     * @param int    $default     1 = default scope, 0 = explicit only (default)
+     * @param  string  $identifier  Scope identifier, e.g. 'openid'
+     * @param  string  $description  Human-readable description
+     * @param  int  $default  1 = default scope, 0 = explicit only (default)
      */
     public function actionAddScope(string $identifier, string $description = '', int $default = 0): int
     {
@@ -306,7 +304,7 @@ class ClientController extends Controller
         $scope->is_default = $default;
 
         if (!$scope->save()) {
-            $this->stderr("Failed to save scope: " . json_encode($scope->errors) . "\n", Console::FG_RED);
+            $this->stderr("Failed to save scope: ".json_encode($scope->errors)."\n", Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
 

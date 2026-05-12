@@ -4,7 +4,6 @@ namespace baha2odeh\yii2oauth\grants;
 
 use baha2odeh\yii2oauth\exceptions\InvalidGrantException;
 use baha2odeh\yii2oauth\exceptions\InvalidRequestException;
-use baha2odeh\yii2oauth\services\TokenGenerator;
 use yii\web\Request;
 
 class RefreshTokenGrant extends AbstractGrant
@@ -68,7 +67,8 @@ class RefreshTokenGrant extends AbstractGrant
         $accessTokenModelClass::updateAll(['revoked' => 1], ['id' => $oldAccessToken->id]);
 
         // Issue new pair
-        $newAccessToken = $this->issueAccessToken($client, $oldAccessToken->getUserId(), $scopes, $this->accessTokenTtl);
+        $newAccessToken = $this->issueAccessToken($client, $oldAccessToken->getUserId(), $scopes,
+            $this->accessTokenTtl);
         $newRefreshToken = $this->issueRefreshToken($newAccessToken, $this->refreshTokenTtl);
 
         return $this->buildTokenResponse($newAccessToken, $newRefreshToken, $this->accessTokenTtl);

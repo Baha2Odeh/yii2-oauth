@@ -30,7 +30,7 @@ class MockRequest extends \yii\web\Request
 
     public function setBasicAuth(string $clientId, string $clientSecret): void
     {
-        $this->authorizationHeader = 'Basic ' . base64_encode("{$clientId}:{$clientSecret}");
+        $this->authorizationHeader = 'Basic '.base64_encode("{$clientId}:{$clientSecret}");
     }
 
     // ---- Override yii\web\Request methods ----

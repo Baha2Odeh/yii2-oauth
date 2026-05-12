@@ -7,16 +7,16 @@ use baha2odeh\yii2oauth\services\TokenGenerator;
 use yii\db\ActiveRecord;
 
 /**
- * @property string      $id                    SHA-256 hash of raw auth code
- * @property string      $client_id
- * @property string      $user_id
- * @property string      $redirect_uri
+ * @property string $id                    SHA-256 hash of raw auth code
+ * @property string $client_id
+ * @property string $user_id
+ * @property string $redirect_uri
  * @property string|null $scopes                JSON array
  * @property string|null $code_challenge
  * @property string|null $code_challenge_method
- * @property int         $revoked
- * @property int         $expires_at
- * @property int         $created_at
+ * @property int $revoked
+ * @property int $expires_at
+ * @property int $created_at
  */
 class OAuthAuthCode extends ActiveRecord implements AuthCodeEntityInterface
 {

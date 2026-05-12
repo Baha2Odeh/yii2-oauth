@@ -6,9 +6,9 @@ use baha2odeh\yii2oauth\contracts\entities\ScopeEntityInterface;
 use yii\db\ActiveRecord;
 
 /**
- * @property string      $identifier
+ * @property string $identifier
  * @property string|null $description
- * @property int         $is_default
+ * @property int $is_default
  */
 class OAuthScope extends ActiveRecord implements ScopeEntityInterface
 {

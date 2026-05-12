@@ -86,7 +86,7 @@ class BearerTokenAuth extends ActionFilter
         $response->getHeaders()->set('WWW-Authenticate', 'Bearer realm="oauth"');
         $response->format = \yii\web\Response::FORMAT_JSON;
         $response->data = [
-            'error'             => 'invalid_token',
+            'error' => 'invalid_token',
             'error_description' => 'The access token provided is missing, invalid, or expired.',
         ];
         $response->send();

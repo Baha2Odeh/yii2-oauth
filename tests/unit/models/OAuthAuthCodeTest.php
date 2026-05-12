@@ -81,7 +81,7 @@ class OAuthAuthCodeTest extends TestCase
     public function testGetCodeChallengeAndMethod(): void
     {
         [$code] = $this->persistCode([
-            'code_challenge'        => 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
+            'code_challenge' => 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
             'code_challenge_method' => 'S256',
         ]);
 

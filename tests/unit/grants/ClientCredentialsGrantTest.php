@@ -44,10 +44,10 @@ class ClientCredentialsGrantTest extends GrantTestCase
         $this->seedConfidentialClient('cc_post_client', 'mysecret', 'client_credentials');
 
         $request = $this->requestWithPost([
-            'grant_type'    => 'client_credentials',
-            'client_id'     => 'cc_post_client',
+            'grant_type' => 'client_credentials',
+            'client_id' => 'cc_post_client',
             'client_secret' => 'mysecret',
-            'scope'         => '',
+            'scope' => '',
         ]);
 
         $response = $this->grant->respondToAccessTokenRequest($request);
@@ -93,7 +93,7 @@ class ClientCredentialsGrantTest extends GrantTestCase
 
         $request = $this->requestWithPost([
             'grant_type' => 'client_credentials',
-            'client_id'  => 'cc_public',
+            'client_id' => 'cc_public',
         ]);
 
         $this->expectException(UnauthorizedClientException::class);

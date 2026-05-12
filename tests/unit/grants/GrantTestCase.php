@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace baha2odeh\yii2oauth\tests\unit\grants;
 
 use baha2odeh\yii2oauth\models\OAuthAccessToken;
-use baha2odeh\yii2oauth\models\OAuthAuthCode;
 use baha2odeh\yii2oauth\models\OAuthClient;
 use baha2odeh\yii2oauth\models\OAuthRefreshToken;
 use baha2odeh\yii2oauth\models\OAuthScope;
@@ -74,7 +73,7 @@ abstract class GrantTestCase extends TestCase
     {
         $scope = new OAuthScope();
         $scope->identifier = $identifier;
-        $scope->description = ucfirst($identifier) . ' access';
+        $scope->description = ucfirst($identifier).' access';
         $scope->is_default = $isDefault;
         $scope->save(false);
 
@@ -85,13 +84,13 @@ abstract class GrantTestCase extends TestCase
     protected function grantConfig(array $extra = []): array
     {
         return array_merge([
-            'clientModelClass'       => OAuthClient::class,
-            'accessTokenModelClass'  => OAuthAccessToken::class,
+            'clientModelClass' => OAuthClient::class,
+            'accessTokenModelClass' => OAuthAccessToken::class,
             'refreshTokenModelClass' => OAuthRefreshToken::class,
-            'scopeModelClass'        => OAuthScope::class,
-            'tokenGenerator'         => $this->generator,
-            'accessTokenTtl'         => 3600,
-            'refreshTokenTtl'        => 2592000,
+            'scopeModelClass' => OAuthScope::class,
+            'tokenGenerator' => $this->generator,
+            'accessTokenTtl' => 3600,
+            'refreshTokenTtl' => 2592000,
         ], $extra);
     }
 

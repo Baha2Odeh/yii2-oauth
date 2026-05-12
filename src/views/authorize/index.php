@@ -5,7 +5,7 @@
  * Variables available:
  * @var \yii\web\View $this
  * @var \baha2odeh\yii2oauth\contracts\entities\ClientEntityInterface $client
- * @var array<string, string> $scopes  identifier => description
+ * @var array<string, string> $scopes identifier => description
  * @var string|null $state
  * @var \baha2odeh\yii2oauth\actions\AuthorizeAction $action
  */
@@ -22,18 +22,23 @@ $this->title = 'Authorize Application';
         is requesting access to your account.
     </p>
 
-    <?php if (!empty($scopes)): ?>
+    <?php
+    if (!empty($scopes)): ?>
         <h3>Requested permissions:</h3>
         <ul>
-            <?php foreach ($scopes as $identifier => $description): ?>
+            <?php
+            foreach ($scopes as $identifier => $description): ?>
                 <li><?= Html::encode($description ?: $identifier) ?></li>
-            <?php endforeach; ?>
+            <?php
+            endforeach; ?>
         </ul>
-    <?php endif; ?>
+    <?php
+    endif; ?>
 
-    <?php $form = \yii\widgets\ActiveForm::begin([
-        'action' => ['/' . \Yii::$app->controller->module->id . '/authorize'],
-        'method' => 'post',
+    <?php
+    $form = \yii\widgets\ActiveForm::begin([
+            'action' => ['/'.\Yii::$app->controller->module->id.'/authorize'],
+            'method' => 'post',
     ]); ?>
 
     <?= Html::hiddenInput('state', $state) ?>
@@ -43,5 +48,6 @@ $this->title = 'Authorize Application';
         <?= Html::submitButton('Deny', ['name' => 'approved', 'value' => '0', 'class' => 'btn btn-danger']) ?>
     </div>
 
-    <?php \yii\widgets\ActiveForm::end(); ?>
+    <?php
+    \yii\widgets\ActiveForm::end(); ?>
 </div>

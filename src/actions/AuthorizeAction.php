@@ -101,10 +101,10 @@ class AuthorizeAction extends Action
         }
 
         return $this->controller->render($this->viewFile, [
-            'client'   => $authRequest['client'],
-            'scopes'   => $scopes,
-            'state'    => $authRequest['state'] ?? null,
-            'action'   => $this,
+            'client' => $authRequest['client'],
+            'scopes' => $scopes,
+            'state' => $authRequest['state'] ?? null,
+            'action' => $this,
         ]);
     }
 
@@ -115,6 +115,11 @@ class AuthorizeAction extends Action
         if ($authRequest === null) {
             \Yii::$app->response->setStatusCode(400);
             \Yii::$app->response->data = 'Authorization session expired. Please start again.';
+            return \Yii::$app->response;
+        }
+        // If user is not logged in, redirect to login and come back
+        if (\Yii::$app->user->isGuest) {
+            \Yii::$app->user->loginRequired();
             return \Yii::$app->response;
         }
 
@@ -144,7 +149,7 @@ class AuthorizeAction extends Action
         \Yii::$app->response->setStatusCode($e->getHttpStatusCode());
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         \Yii::$app->response->data = [
-            'error'             => $e->getErrorCode(),
+            'error' => $e->getErrorCode(),
             'error_description' => $e->getMessage(),
         ];
         return \Yii::$app->response;

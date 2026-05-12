@@ -7,13 +7,13 @@ use baha2odeh\yii2oauth\services\TokenGenerator;
 use yii\db\ActiveRecord;
 
 /**
- * @property string      $id          SHA-256 hash of raw token
- * @property string      $client_id
+ * @property string $id          SHA-256 hash of raw token
+ * @property string $client_id
  * @property string|null $user_id
  * @property string|null $scopes      JSON array
- * @property int         $revoked
- * @property int         $expires_at
- * @property int         $created_at
+ * @property int $revoked
+ * @property int $expires_at
+ * @property int $created_at
  */
 class OAuthAccessToken extends ActiveRecord implements AccessTokenEntityInterface
 {
