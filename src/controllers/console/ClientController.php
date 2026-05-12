@@ -31,6 +31,7 @@ class ClientController extends Controller
     public string $grantTypes = 'authorization_code,refresh_token';
     public string $scopes = '';
     public int $confidential = 1;
+    public ?int $requirePkce = 0;
 
     public function options($actionId): array
     {
@@ -94,7 +95,7 @@ class ClientController extends Controller
         $client->scopes = $this->scopes ?: null;
         $client->is_confidential = (int) $this->confidential;
         $client->is_active = 1;
-        $client->require_pkce = 0;
+        $client->require_pkce = $this->requirePkce ?? 0;
 
         if (!$client->save()) {
             $this->stderr("Failed to create client:\n", Console::FG_RED);
