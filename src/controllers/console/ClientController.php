@@ -38,7 +38,7 @@ class ClientController extends Controller
         $base = parent::options($actionId);
 
         return match ($actionId) {
-            'create' => array_merge($base, ['name', 'redirectUris', 'grantTypes', 'scopes', 'confidential']),
+            'create' => array_merge($base, ['name', 'redirectUris', 'grantTypes', 'scopes', 'confidential', 'requirePkce']),
             default => $base,
         };
     }
