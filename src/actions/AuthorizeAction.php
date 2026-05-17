@@ -72,6 +72,9 @@ class AuthorizeAction extends Action
             return \Yii::$app->response;
         }
 
+        // Clear the return URL so it doesn't pollute future goBack() calls
+        \Yii::$app->user->setReturnUrl(null);
+
         // If user already approved this client+scopes, auto-approve (skip consent)
         $userId = (string) \Yii::$app->user->id;
         $clientId = $authRequest['client']->getIdentifier();
