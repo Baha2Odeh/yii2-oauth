@@ -20,6 +20,7 @@ A lightweight, extensible OAuth2 authorization server extension for Yii2.
 - **Custom grant types** via a simple interface
 - **BearerTokenAuth** filter — attach to any controller
 - **Standalone actions** — attach token/authorize/userinfo to your own controllers
+- **Native App-to-App SSO** — JSON consent action for background (no-WebView) mobile flows
 - **Console commands** for client and scope management
 - Single database migration — SQLite, MySQL, PostgreSQL compatible
 
@@ -264,6 +265,107 @@ curl https://your-app.com/oauth/userinfo \
 ```
 
 The claims come from `UserEntityInterface::getClaims()` on your user model.
+
+---
+
+## Native App-to-App SSO (JSON consent, no WebView)
+
+For native App-to-App SSO (App B authenticates via App A), App A makes a **background HTTP
+call** instead of opening a WebView — so it cannot follow the standard `/oauth/authorize`
+302 redirect. `NativeConsentAction` runs the same authorization-code + PKCE logic but returns
+the code as **JSON**, letting App A build the deep link back into App B itself.
+
+This action is **not auto-registered**. Attach it to one of your own already-authenticated
+API controllers. The granting user is read from `Yii::$app->user`, so the request MUST be
+authenticated by your app's own auth (a guest is rejected with 401).
+
+```php
+use baha2odeh\yii2oauth\actions\NativeConsentAction;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\HttpBearerAuth;
+use yii\filters\auth\QueryParamAuth;
+
+class ApiController extends \yii\rest\Controller
+{
+    public $enableCsrfValidation = false; // JSON API, not a browser form
+
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            // Your app's own auth — must populate Yii::$app->user
+            'authenticator' => [
+                'class' => CompositeAuth::class,
+                'authMethods' => [
+                    HttpBearerAuth::class,
+                    QueryParamAuth::class,
+                ],
+            ],
+        ]);
+    }
+
+    public function actions(): array
+    {
+        return [
+            'native-consent' => [
+                'class' => NativeConsentAction::class,
+                'authCodeTtl' => 60, // short-lived; native codes are exchanged immediately
+                'moduleId' => 'oauth',
+            ],
+        ];
+    }
+}
+```
+
+### Flow
+
+1. App B generates a PKCE `code_verifier` + `code_challenge`, deep-links into App A.
+2. App A (user already authenticated) shows a native consent screen.
+3. On **Allow**, App A POSTs this endpoint (on its authenticated session/token):
+
+```bash
+curl -X POST https://your-app.com/api/native-consent \
+  -H "Authorization: Bearer APP_A_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "app_b_client_id",
+    "redirect_uri": "appb://callback",
+    "response_type": "code",
+    "code_challenge": "XYZ123...",
+    "code_challenge_method": "S256",
+    "scopes": "profile email"
+  }'
+```
+
+4. The action issues the auth code (tied to `Yii::$app->user`) and returns JSON:
+
+```json
+{
+  "success": true,
+  "code": "generated_auth_code_here",
+  "redirect_uri": "appb://callback?code=generated_auth_code_here",
+  "expires_in": 60
+}
+```
+
+5. App A opens `redirect_uri`; App B exchanges the code at `/oauth/token` with its
+   `code_verifier` (standard Authorization Code + PKCE step above).
+
+> Register App B as a **public** client with `require_pkce = 1` and the exact
+> `appb://callback` redirect URI:
+>
+> ```bash
+> php yii oauth/client/create \
+>   --name="App B" \
+>   --redirect-uris="appb://callback" \
+>   --grant-types="authorization_code,refresh_token" \
+>   --confidential=0
+> ```
+>
+> Then set `require_pkce = 1` on that client row so PKCE is enforced.
+
+The action returns OAuth-style error JSON (`{"success": false, "error": "...",
+"error_description": "..."}`) with the matching HTTP status for invalid `client_id`,
+`redirect_uri` mismatch, or missing PKCE.
 
 ---
 
