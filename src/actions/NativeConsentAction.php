@@ -56,6 +56,7 @@ class NativeConsentAction extends \yii\base\Action
         if ($userId === null) {
             throw new UnauthorizedHttpException('A valid, user-bound access token is required');
         }
+        $userId = (string)$userId;
 
         $grant = $this->buildGrant();
 
@@ -70,7 +71,6 @@ class NativeConsentAction extends \yii\base\Action
             $response->setStatusCode($e->getHttpStatusCode());
             return $this->fail($response, $e->getErrorCode(), $e->getMessage());
         }
-
         $code = $this->extractCode($redirectUri);
         if ($code === null) {
             $response->setStatusCode(500);
@@ -136,15 +136,13 @@ class NativeConsentAction extends \yii\base\Action
     /** Pull the `code` query param out of the grant's redirect URI. */
     private function extractCode(string $redirectUri): ?string
     {
-        $query = parse_url($redirectUri, PHP_URL_QUERY);
-        if (!is_string($query) || $query === '') {
-            return null;
+
+        if (preg_match('/[?&]code=([^&]+)/', $redirectUri, $matches)) {
+            $code = $matches[1];
+        } else {
+            $code = null;
         }
-
-        parse_str($query, $params);
-        $code = $params['code'] ?? null;
-
-        return is_string($code) && $code !== '' ? $code : null;
+        return $code;
     }
 
     private function getModule(): OAuthModule
