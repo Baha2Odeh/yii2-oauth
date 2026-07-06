@@ -3,6 +3,7 @@
 namespace baha2odeh\yii2oauth\actions;
 
 use baha2odeh\yii2oauth\exceptions\OAuthException;
+use baha2odeh\yii2oauth\models\OAuthAccessToken;
 use baha2odeh\yii2oauth\OAuthModule;
 use yii\base\Action;
 use yii\web\Response;
@@ -69,6 +70,26 @@ class AuthorizeAction extends Action
         if (\Yii::$app->user->isGuest) {
             \Yii::$app->user->loginRequired();
             return \Yii::$app->response;
+        }
+
+        // Clear the return URL so it doesn't pollute future goBack() calls
+        \Yii::$app->user->setReturnUrl(null);
+
+        // If user already approved this client+scopes, auto-approve (skip consent)
+        $userId = (string) \Yii::$app->user->id;
+        $clientId = $authRequest['client']->getIdentifier();
+        if (OAuthAccessToken::hasActiveToken($userId, $clientId, $authRequest['scopes'])) {
+            $authRequest['grant_type'] = 'authorization_code';
+            try {
+                $redirectUri = $module->getAuthorizationServer()->completeAuthorizationRequest(
+                    $authRequest,
+                    $userId,
+                    true
+                );
+            } catch (OAuthException $e) {
+                return $this->renderError($e);
+            }
+            return \Yii::$app->response->redirect($redirectUri);
         }
 
         // Store the auth request in session and show the consent form

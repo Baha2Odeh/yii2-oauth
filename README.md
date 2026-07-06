@@ -11,7 +11,7 @@ A lightweight, extensible OAuth2 authorization server extension for Yii2.
 
 ## Features
 
-- **Authorization Code** grant with optional **PKCE** (S256 and plain)
+- **Authorization Code** grant with optional **PKCE** (S256 and plain) and **automatic consent reuse**
 - **Client Credentials** grant
 - **Password** grant
 - **Refresh Token** grant
@@ -168,6 +168,9 @@ GET /oauth/authorize
 ```
 
 The user sees the consent page and approves or denies the request.
+
+> **Automatic consent reuse:** If the user has previously approved this client and a valid (non-revoked, non-expired) access token still exists for the same user, client, and scopes, the consent screen is skipped entirely and the user is redirected back immediately with a new authorization code.
+
 On approval, the server redirects back:
 
 ```
@@ -509,13 +512,22 @@ class OAuthController extends \yii\web\Controller
             'authorize' => [
                 'class' => AuthorizeAction::class,
                 'viewFile' => '@app/views/oauth/authorize', // override the consent view
-                'loginUrl' => ['/site/login'],
+                'loginUrl' => ['/site/login'],              // redirect here if user is not logged in
             ],
             'userinfo' => UserinfoAction::class,
         ];
     }
 }
 ```
+
+`AuthorizeAction` properties:
+
+| Property      | Type             | Default                                         | Description                                      |
+|---------------|------------------|--------------------------------------------------|--------------------------------------------------|
+| `viewFile`    | `string`         | `@baha2odeh/yii2oauth/views/authorize/index`     | Path to the consent view                         |
+| `loginUrl`    | `string\|array`  | `['/site/login']`                                | Where to redirect unauthenticated users          |
+| `moduleId`    | `string`         | `oauth`                                          | The OAuth module ID in your app config           |
+| `sessionKey`  | `string`         | `oauth_auth_request`                             | Session key for persisting the auth request       |
 
 ---
 
@@ -642,7 +654,30 @@ Create a view at any path and set it on the action:
 'authorize' => [
     'class'    => \baha2odeh\yii2oauth\actions\AuthorizeAction::class,
     'viewFile' => '@app/views/oauth/consent',
+    'loginUrl' => ['/site/login'],
 ],
+```
+
+### Consent Reuse (Auto-Approve)
+
+By default, `AuthorizeAction` skips the consent screen when the user already has a valid access token for the same client and scopes. This means:
+
+- **First authorization:** user sees the consent page and must approve.
+- **Subsequent authorizations:** if a non-revoked, non-expired token exists covering the requested scopes, the user is redirected back immediately with a new auth code — no consent page shown.
+- **Token expires or is revoked:** consent page is shown again.
+
+This is the standard behavior used by most OAuth2 providers (Google, GitHub, etc.).
+
+If you need to force consent every time (e.g. for sensitive scopes), you can override `AuthorizeAction` and bypass the auto-approve check:
+
+```php
+use baha2odeh\yii2oauth\actions\AuthorizeAction;
+
+class StrictAuthorizeAction extends AuthorizeAction
+{
+    // Override to always show consent — skip automatic approval
+    // by not calling parent and re-implementing handleAuthorize without the token check
+}
 ```
 
 Available variables in the view:

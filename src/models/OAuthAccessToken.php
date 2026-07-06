@@ -79,6 +79,27 @@ class OAuthAccessToken extends ActiveRecord implements AccessTokenEntityInterfac
 
     // ---- Static finders ----
 
+    /**
+     * Check if a valid (non-revoked, non-expired) access token exists
+     * for the given user+client covering all requested scopes.
+     */
+    public static function hasActiveToken(string $userId, string $clientId, array $scopes): bool
+    {
+        $tokens = static::find()
+            ->where(['user_id' => $userId, 'client_id' => $clientId, 'revoked' => 0])
+            ->andWhere(['>', 'expires_at', time()])
+            ->all();
+
+        foreach ($tokens as $token) {
+            $tokenScopes = json_decode($token->scopes ?? '[]', true) ?: [];
+            if (empty(array_diff($scopes, $tokenScopes))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /** Look up a token by its raw value (hashes it internally). */
     public static function findByRawToken(string $rawToken): ?static
     {
